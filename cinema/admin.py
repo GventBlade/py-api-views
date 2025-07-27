@@ -5,10 +5,19 @@ from cinema.models import Movie, Actor, CinemaHall, Genre
 
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
-    list_display = ("title", "display_actors", "display_genres", "description", "duration")
+    list_display = (
+        "title",
+        "display_actors",
+        "display_genres",
+        "description",
+        "duration",
+    )
 
     def display_actors(self, obj):
-        return ", ".join([actor.first_name + " " + actor.last_name for actor in obj.actors.all()])
+        return ", ".join(
+            [actor.first_name + " " + actor.last_name for actor in
+             obj.actors.all()]
+        )
 
     display_actors.short_description = "Actors"
 
