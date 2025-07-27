@@ -3,11 +3,15 @@ from rest_framework import serializers
 from cinema.models import Movie, Actor, CinemaHall, Genre
 
 
-class MovieSerializer(serializers.Serializer):
+class MovieSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     title = serializers.CharField(max_length=255)
     description = serializers.CharField()
     duration = serializers.IntegerField()
+    genres = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Genre.objects.all())
+    actors = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Actor.objects.all())
 
     def create(self, validated_data):
         return Movie.objects.create(**validated_data)
@@ -22,16 +26,19 @@ class MovieSerializer(serializers.Serializer):
 
         return instance
 
-    def delete(self, instance):
-        instance.delete()
-        return
-
     class Meta:
         model = Movie
-        fields = "__all__"
+        fields = (
+            "id",
+            "title",
+            "description",
+            "duration",
+            "genres",
+            "actors",
+        )
 
 
-class ActorSerializer(serializers.Serializer):
+class ActorSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     first_name = serializers.CharField(max_length=255)
     last_name = serializers.CharField(max_length=255)
@@ -42,8 +49,8 @@ class ActorSerializer(serializers.Serializer):
     def update(self, instance, validated_data):
         instance.first_name = validated_data.get(
             "first_name", instance.first_name)
-        instance.last_name =\
-            validated_data.get("last_name", instance.last_name)
+        instance.last_name = validated_data.get(
+            "last_name", instance.last_name)
         instance.save()
         return instance
 
@@ -56,7 +63,7 @@ class ActorSerializer(serializers.Serializer):
         fields = "__all__"
 
 
-class GenreSerializer(serializers.Serializer):
+class GenreSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     name = serializers.CharField(max_length=255)
 
@@ -68,16 +75,12 @@ class GenreSerializer(serializers.Serializer):
         instance.save()
         return instance
 
-    def delete(self, instance):
-        instance.delete()
-        return
-
     class Meta:
         model = Genre
-        fields = "name"
+        fields = "__all__"
 
 
-class CinemaHallSerializer(serializers.Serializer):
+class CinemaHallSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     name = serializers.CharField(max_length=255)
     rows = serializers.IntegerField()
@@ -94,10 +97,6 @@ class CinemaHallSerializer(serializers.Serializer):
         )
         instance.save()
         return instance
-
-    def delete(self, instance):
-        instance.delete()
-        return
 
     class Meta:
         model = CinemaHall

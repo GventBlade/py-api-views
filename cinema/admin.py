@@ -15,8 +15,8 @@ class MovieAdmin(admin.ModelAdmin):
 
     def display_actors(self, obj):
         return ", ".join(
-            [actor.first_name + " " + actor.last_name for actor in
-             obj.actors.all()]
+            [actor.first_name + " " + actor.last_name for
+             actor in obj.actors.all()]
         )
 
     display_actors.short_description = "Actors"
